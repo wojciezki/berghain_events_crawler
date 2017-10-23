@@ -34,6 +34,8 @@ class ArtistSpider(scrapy.Spider):
             yield request
 
         for div in response.xpath('//div[@class="expandlist"]//a/@href'):
+            # import pdb
+            # pdb.set_trace()
             yield response.follow(div, callback=self.parse)
 
     def parse_event(self, response):
@@ -47,11 +49,9 @@ class ArtistSpider(scrapy.Spider):
         items = response.xpath('//*[@class="col_context"]')
 
         for row in items:
-            import pdb
-            pdb.set_trace()
-            item['lineup'] = row.xpath('//span[@class="running_order_name"]/text()').extract()
 
-
+            item['lineup'] = \
+                [x.strip() for x in row.xpath('//span[@class="running_order_name"]/text()[normalize-space()]').extract()]
 
         yield item
 
