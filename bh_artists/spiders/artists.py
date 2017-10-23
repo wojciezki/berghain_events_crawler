@@ -6,23 +6,21 @@ from scrapy.linkextractors import LinkExtractor
 from bh_artists.items import BhArtistsItem
 
 
-class ArtistSpider(CrawlSpider):
+class ArtistSpider(scrapy.Spider):
     name = 'artists'
-    allowed_domains = ['www.berghain.de']
-    start_urls = ['http://berghain.de/events']
+    allowed_domains = ['berghain.de']
+    start_urls = ['http://berghain.de/events/']
 
     def parse(self, response):
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
         # create array of auctions links
-        event_page = response.xpath('//*[@class="type_stage"]/span/a/@href').extract()
+        event_page = response.xpath('//*[@class="x3cols"]/div/h4/span/a/@href').extract()
         events = []
         for page in event_page:
             events.append(response.urljoin(page))
 
         for event in events:
-            import pdb
-            pdb.set_trace()
             # define item
             item = BhArtistsItem()
             item['event_link'] = event
@@ -39,7 +37,8 @@ class ArtistSpider(CrawlSpider):
             yield response.follow(div, callback=self.parse)
 
     def parse_event(self, response):
-
+        # import pdb
+        # pdb.set_trace()
         item = response.meta['item']
 
         item['event_date'] = response.xpath('//div[@class="headline"]/h2/text()').extract_first()
@@ -48,8 +47,11 @@ class ArtistSpider(CrawlSpider):
         items = response.xpath('//*[@class="col_context"]')
 
         for row in items:
-            dd = [row.xpath('//*[@class="col_context"]/ul/li/span[2]/text()')]
-            item['lineup'][row.xpath('h4/text()').extract_first] = [x for x in dd]
+            import pdb
+            pdb.set_trace()
+            item['lineup'] = row.xpath('//span[@class="running_order_name"]/text()').extract()
+
+
 
         yield item
 

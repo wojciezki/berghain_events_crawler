@@ -12,7 +12,7 @@ from scrapy import Field, Item
 class BhArtistsItem(scrapy.Item):
     event_link = scrapy.Field()
     event_name = scrapy.Field()
-    date = scrapy.Field()
+    event_date = scrapy.Field()
     lineup = scrapy.Field()
 
 
